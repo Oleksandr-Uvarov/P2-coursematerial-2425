@@ -11,24 +11,24 @@ class LengthConverter:
     
     @meter.setter
     def meter(self, value):
-        if self.__meter != value:
-            self.__meter = value
+        self.__meter = value
+        self.__distance_in_meters = value
     
     @property
     def feet(self):
-        return self.__feet
+        return self.__distance_in_meters * 3.28084
     
     @feet.setter
     def feet(self, value):
-        if self.__feet != value:
-            self.__feet = value
+        self.__distance_in_meters = value / 3.28084
 
     @property 
     def inch(self):
-        return self.__inch
+        return self.__distance_in_meters * 39.3701
 
     @inch.setter
     def inch(self, value):
-        if self.__inch != value:
-            self.__inch = value
+        self.__distance_in_meters = value / 39.3701
 
+converter = LengthConverter()
+converter.meter = 100
