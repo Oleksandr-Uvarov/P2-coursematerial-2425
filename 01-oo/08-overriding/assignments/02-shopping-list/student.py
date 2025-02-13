@@ -24,3 +24,33 @@ class ShoppingList:
         if not item.can_be_sold_to(self.owner):
             raise ValueError()
         self.__items.append(item)
+
+
+class Item:
+    def __init__(self, name, price):
+        self.name = name
+        self.price = price
+
+    def can_be_sold_to(self, customer):
+        return True
+    
+
+class AgeRestrictedItem(Item):
+    def __init__(self, name, price):
+        super().__init__(name, price)
+
+    
+    def can_be_sold_to(self, customer):
+        if customer.age >= 18:
+            return True
+        return False
+    
+
+class CountryRestrictedItem(Item):
+    def __init__(self, name, price):
+        super().__init__(name, price)
+
+    def can_be_sold_to(self, customer):
+        if customer.country == "Arstotzka":
+            return False
+        return True
