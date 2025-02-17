@@ -29,7 +29,7 @@ class C(B):
         pass
 
 
-class D(C):
+class D(A):
     def b(self):
         self.f()
 
