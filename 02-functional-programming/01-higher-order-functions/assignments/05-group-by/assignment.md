@@ -39,7 +39,7 @@ def card_suit(card):
     Card(value=5, suit='clubs'),
     Card(value=4, suit='hearts'),
     Card(value=10, suit='hearts'),
-])
+], card_suit)
 {
     'hearts': [Card(value=2, suit='hearts'), Card(value=4, suit='hearts'), Card(value=10, suit='hearts')],
     'clubs': [Card(value=5, suit='clubs')]
