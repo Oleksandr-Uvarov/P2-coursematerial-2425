@@ -1,7 +1,9 @@
 from util import Card
 from util import group_by
 
-cards = [Card("1", "Spades"), Card("2", "Clubs"), Card("1", "Clubs"), Card("3", "Hearts"), Card("4", "Diamonds"), Card("Queen", "Clubs")]
+
+cards = [Card("1", "spades"), Card("2", "clubs"), Card("1", "clubs"), Card("3", "hearts"), Card("4", "diamonds"), Card("queen", "clubs")]
+# cards = [Card(value, suit) for value in range(2, 11) for suit in ['hearts', 'diamonds', 'clubs', 'spades']]
 # group_by_suit = lambda card: (card.suit, card.value)
 
 # group_by_value = lambda card: (card.value, card.suit)
@@ -34,17 +36,39 @@ group_by_suit = lambda cards: group_by(cards, lambda card: card.suit)
 
 
         
+def partition(xs, condition):
+    true_list = []
+    false_list = []
 
-
-def partition_by_color(cards):
-    black_cards, red_cards = [], []
-    for card in cards:
-        if card.suit in ("Spades, Clubs"):
-            black_cards.append(card)
+    for x in xs:
+        if condition(x):
+            true_list.append(x)
         else:
-            red_cards.append(card)
+            false_list.append(x)
 
-    return black_cards, red_cards
-    # return red_cards, black_cards
+    return (true_list, false_list)
 
-# partition_by_color = lambda card: [[card.suit in ("Spades, Clubs")], [card.suit in ("Hearts, Diamonds")]]
+# def partition_by_color(cards):
+#     black_cards, red_cards = [], []
+#     for card in cards:
+#         if card.suit in ("spades", "clubs"):
+#             black_cards.append(card)
+#         else:
+#             red_cards.append(card)
+
+#     return black_cards, red_cards
+
+# def partition_by_color(cards):
+#     # def black_suit(card):
+#     #     return card.suit in ("spades", "clubs")
+#     black_suit = lambda card: card.suit in ("spades", "clubs")
+
+
+#     return partition(cards, black_suit)
+
+
+partition_by_color = lambda cards: partition(cards, lambda card: card.suit in ("spades", "clubs"))
+
+print(partition_by_color(cards))
+
+
