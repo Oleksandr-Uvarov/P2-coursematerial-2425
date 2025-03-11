@@ -1,17 +1,15 @@
 class LengthConverter:
     def __init__(self):
         self.__distance_in_meters = 0
-        self.meter = 0
         self.feet = 0
         self.inch = 0
 
     @property
     def meter(self):
-        return self.__meter
+        return self.__distance_in_meters
     
     @meter.setter
     def meter(self, value):
-        self.__meter = value
         self.__distance_in_meters = value
     
     @property
