@@ -15,3 +15,4 @@ def children_and_adults(people):
         return person.age >= 18
     
     return partition(people, is_adult)
+
