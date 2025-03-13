@@ -19,13 +19,20 @@ from itertools import groupby
 #     yield(previous_char, count)
 
 def rle_encode(data):
-    test = groupby(data)
-    yield ((e[0], len(list(e[1]))) for e in test)
+    return ((char, len(list(group))) for char, group in groupby(data))
 
 def rle_decode(data):
-    for pair in data:
-        for i in range(pair[1]):
-            yield pair[0] 
+    # we're unpacking each of the tuples here in data with "for char, count"
+    return (char for char, count in data for i in range(count))
+
+    # or
+    # return (pair[0] for pair in data for i in range(pair[1]))
+
+    # or
+    
+    # for pair in data:
+    #     for i in range(pair[1]):
+    #         yield pair[0] 
 
 
 
