@@ -6,5 +6,10 @@ def fibonacci(n):
     
     return(fibonacci(n-1) + fibonacci(n-2))
 
-print(fibonacci(100))
+# print(fibonacci(100))
      
+
+
+lst = [x + y for x in range(3) for y in range(3) if x != y]
+
+print(lst)
