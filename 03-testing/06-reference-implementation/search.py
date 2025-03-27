@@ -8,7 +8,26 @@ def linear_search(students, target_id):
     return None
 
 
+def binary_search(students, target_id):
+    left = 0
+    right = len(students)
 
+    while left < right:
+        middle_index = (left + right) // 2
+
+        middle = students[middle_index]
+        middle_id = middle.id
+
+        if middle_id == target_id:
+            return middle
+
+        if middle_id < target_id:
+            right = middle_index - 1
+        
+        if middle_id > target_id:
+            left = middle_index + 1
+
+    return None
 
 student_0 = Student(0)
 student_1 = Student(1)
