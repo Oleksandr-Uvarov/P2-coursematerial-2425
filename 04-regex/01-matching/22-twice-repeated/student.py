@@ -1,4 +1,9 @@
 import re
 
 def twice_repeated(string):
-    return re.findall(r"(.)\1", string)
+    if string == "":
+        return False
+    return re.fullmatch(r"(.*)\1", string)
+
+
+print(bool(twice_repeated("")))

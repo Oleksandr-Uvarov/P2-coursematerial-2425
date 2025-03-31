@@ -1,6 +1,6 @@
 import pytest
 import student
-import solution
+# import solution
 
 
 @pytest.mark.parametrize(("string", "expected"), [
