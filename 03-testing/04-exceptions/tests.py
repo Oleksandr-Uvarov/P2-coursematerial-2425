@@ -39,7 +39,7 @@ def test_creation_with_invalid_title(isbn):
     '978-1709571127',
     '978-1-77-950182-7',
     '97817795011271',
-    '978073561131'
+    '978073561131',
 ])
 def test_creation_with_invalid_isbn(title, isbn):
     with pytest.raises(RuntimeError):

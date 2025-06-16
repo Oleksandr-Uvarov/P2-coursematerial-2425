@@ -1,4 +1,5 @@
 from datetime import date, timedelta
+from calendars import Calendar # Import the Calendar class
 
 class Task:
     """
@@ -42,12 +43,17 @@ class TaskList:
     """
     Manages a collection of Task objects, providing methods to add,
     and categorize tasks based on their status and due dates.
+    It now uses a Calendar object to determine the current date.
     """
-    def __init__(self):
+    def __init__(self, calendar: Calendar):
         """
         Initializes an empty TaskList.
+
+        Args:
+            calendar (Calendar): An object providing the current date (e.g., Calendar or CalendarStub).
         """
         self._tasks = []
+        self._calendar = calendar # Store the injected calendar dependency
 
     def add_task(self, task: Task):
         """
@@ -57,9 +63,9 @@ class TaskList:
             task (Task): The Task object to add.
 
         Raises:
-            RuntimeError: If the task's due_date is in the past.
+            RuntimeError: If the task's due_date is in the past relative to the calendar's today.
         """
-        if task.due_date < date.today():
+        if task.due_date < self._calendar.today: # Use the injected calendar's today
             raise RuntimeError("Cannot add a task with a due date in the past.")
         self._tasks.append(task)
 
@@ -86,10 +92,11 @@ class TaskList:
     @property
     def overdue_tasks(self) -> list[Task]:
         """
-        Returns a list of all unfinished tasks whose due_date is in the past.
+        Returns a list of all unfinished tasks whose due_date is in the past
+        relative to the calendar's today.
         """
-        today = date.today()
-        return [task for task in self._tasks if not task.finished and task.due_date < today]
+        current_date = self._calendar.today # Use the injected calendar's today
+        return [task for task in self._tasks if not task.finished and task.due_date < current_date]
 
     def __repr__(self):
         """
@@ -103,6 +110,9 @@ class TaskList:
 
 # Example Usage (as provided in the problem description, for testing purposes)
 if __name__ == '__main__':
+    # When running the main script, we use the real Calendar
+    from calendars import Calendar, CalendarStub
+
     print("--- Task Class Examples ---")
     task = Task('bake birthday cake', date(2023, 10, 1))
     print(f"Description: {task.description}")
@@ -112,12 +122,13 @@ if __name__ == '__main__':
     print(f"Finished after setting: {task.finished}")
     print(f"Task representation: {task}")
 
-    print("\n--- TaskList Class Examples ---")
-    tasks = TaskList()
+    print("\n--- TaskList Class Examples (with real Calendar) ---")
+    real_calendar = Calendar()
+    tasks = TaskList(real_calendar) # Pass the real calendar
     print(f"Initial TaskList length: {len(tasks)}")
 
-    tomorrow = date.today() + timedelta(days=1)
-    yesterday = date.today() - timedelta(days=1)
+    tomorrow = real_calendar.today + timedelta(days=1)
+    yesterday = real_calendar.today - timedelta(days=1)
 
     # Adding task with due_date in past is forbidden
     print("\nAttempting to add a task with a past due date (should raise RuntimeError):")
@@ -137,13 +148,13 @@ if __name__ == '__main__':
     print(f"Overdue tasks: {tasks.overdue_tasks}")
     print(f"TaskList representation: {tasks}")
 
-    # Simulate waiting two days (for demonstration, won't actually wait)
-    # To properly test overdue, you'd run this script on different days or mock date.today()
-    print("\nSimulating tasks becoming overdue (manual check needed, as date.today() is static for this run):")
-    task_just_due = Task('pay bills', date.today()) # Task due today, will not be overdue yet
+    # Add a task that is due today
+    print("\nAdding a task due today:")
+    task_just_due = Task('pay bills', real_calendar.today)
     tasks.add_task(task_just_due)
     print(f"Due tasks (including today's): {tasks.due_tasks}")
-    print(f"Overdue tasks (still empty for this run unless due_date was yesterday): {tasks.overdue_tasks}")
+    print(f"Overdue tasks (should be empty if due today): {tasks.overdue_tasks}")
+
 
     # Mark a task as finished
     print("\nMarking 'buy groceries' task as finished:")
@@ -153,10 +164,35 @@ if __name__ == '__main__':
     print(f"Overdue tasks: {tasks.overdue_tasks}")
     print(f"TaskList representation: {tasks}")
 
-    # Add a task that will definitely be overdue if this script runs tomorrow
-    task_tomorrow_overdue = Task('review report', date.today() + timedelta(days=1))
-    tasks.add_task(task_tomorrow_overdue)
-    print(f"\nAdded task due tomorrow: {task_tomorrow_overdue}")
-    print(f"Due tasks: {tasks.due_tasks}")
-    print(f"Overdue tasks: {tasks.overdue_tasks}")
+    print("\n--- TaskList Class Examples (with CalendarStub for specific date) ---")
+    stub_calendar = CalendarStub(date(2023, 1, 15)) # Set a specific date for testing
+    stub_tasks = TaskList(stub_calendar)
+
+    task1 = Task('Do laundry', date(2023, 1, 10)) # Overdue for stub_calendar
+    task2 = Task('Call mom', date(2023, 1, 20))  # Future for stub_calendar
+    task3 = Task('Read book', date(2023, 1, 14)) # Overdue for stub_calendar
+
+    stub_tasks.add_task(task2) # Add future task successfully
+
+    # Try adding an overdue task from the stub's perspective
+    try:
+        stub_tasks.add_task(task1)
+    except RuntimeError as e:
+        print(f"Caught expected error (from stub): {e}")
+
+    stub_calendar.today = date(2023, 1, 5) # Change stub date to allow task1 and task3
+    stub_tasks.add_task(task1)
+    stub_tasks.add_task(task3)
+
+    print(f"\nStub Calendar today: {stub_calendar.today}")
+    print(f"Stub TaskList due tasks: {stub_tasks.due_tasks}")
+    print(f"Stub TaskList overdue tasks (expected empty here): {stub_tasks.overdue_tasks}")
+
+    stub_calendar.today = date(2023, 1, 25) # Advance stub date to make tasks overdue
+
+    print(f"\nStub Calendar today (advanced): {stub_calendar.today}")
+    print(f"Stub TaskList due tasks: {stub_tasks.due_tasks}")
+    print(f"Stub TaskList overdue tasks (expected task1 and task3): {stub_tasks.overdue_tasks}")
+    task1.finished = True
+    print(f"Stub TaskList overdue tasks (after finishing task1): {stub_tasks.overdue_tasks}")
 
